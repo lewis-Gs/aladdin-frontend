@@ -8,7 +8,7 @@ import {GetJobsList} from "@/graphql/job/GetJobsList";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const Card = ({agent}) => {
+const Card = ({job}) => {
     let tags = agent.tags
     if(agent.tags){
         tags = tags.split(',')
@@ -33,7 +33,7 @@ const Card = ({agent}) => {
                     0
                 </div>
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-800">测试任务：客服问题处理</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">{{job.jobtitle}}</h2>
                     <div className="mt-1 flex items-center space-x-2 text-sm text-gray-500">
                         <span>0x1234...cdef</span>
                         <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded">
@@ -117,7 +117,7 @@ export default function Job() {
                     <div className={"flex gap-2 grid grid-cols-2"}>
                         {
                             jobList.map(item => {
-                                return <Card key={item.id} agent={item}/>
+                                return <Card key={item.id} job={item}/>
                             })
                         }
                     </div>
