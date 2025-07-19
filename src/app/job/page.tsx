@@ -5,12 +5,28 @@ import Link from "next/link";
 import {service} from "@/graphql/API";
 import { CalendarIcon } from '@heroicons/react/24/outline'
 import {GetJobsList} from "@/graphql/job/GetJobsList";
-
+function isExpired(isoDateStr: string | number | Date) {
+    const targetTime = new Date(isoDateStr).getTime()
+    if (isNaN(targetTime)) {
+        throw new Error('Invalid date string: ' + isoDateStr)
+    }
+    return Date.now() > targetTime
+}
+function formatToYYYYMMDD(isoDateStr: string | number | Date) {
+    const date = new Date(isoDateStr)
+    if (isNaN(date.getTime())) {
+        throw new Error('Invalid ISO date string: ' + isoDateStr)
+    }
+    const year  = date.getUTCFullYear()
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+    const day   = String(date.getUTCDate()).padStart(2, '0')
+    return `${year}${month}${day}`
+}
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const Card = ({job}) => {
-    let tags = agent.tags
-    if(agent.tags){
+    let tags = job.tags
+    if(job.tags){
         tags = tags.split(',')
     }else{
         tags = []
@@ -33,11 +49,10 @@ const Card = ({job}) => {
                     0
                 </div>
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-800">{{job.jobtitle}}</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">{job.jobtitle}</h2>
                     <div className="mt-1 flex items-center space-x-2 text-sm text-gray-500">
                         <span>0x1234...cdef</span>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded">
-            Marketing Expert
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded">{job.category}
           </span>
                     </div>
                 </div>
@@ -45,24 +60,33 @@ const Card = ({job}) => {
 
             {/* 状态标签 & 日期 */}
             <div className="mt-4 flex items-center space-x-3 text-sm">
-                <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded">Expired</span>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">Medium</span>
-                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded">Intermediate</span>
+                <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded">{isExpired(job.deadline)?'Expired':'open'}</span>
+                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">{job.priority}</span>
+                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded">{job.skilllevel}</span>
                 <div className="ml-auto flex items-center text-gray-500">
                     <CalendarIcon className="w-4 h-4 mr-1" />
-                    <span>Jun 28, 2025</span>
+                    <span>{formatToYYYYMMDD(job.deadline)}</span>
                 </div>
             </div>
 
             {/* 描述 */}
             <p className="mt-4 text-gray-700 leading-relaxed">
-                请帮我处理一个客户关于加密货币价格查询的问题。客户想了解比特币和以太坊的当前价格，以及最近24小时的价格变化趋势。请提供专业且友好的回复。
+                {job.description}
             </p>
 
             {/* 标签 & 托管状态 */}
             <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded">测试tags</span>
-                <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded">测试tags2</span>
+                {/* 标签组 */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {tags.map((tag:string) => (
+                        <span
+                            key={tag}
+                            className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full"
+                        >
+            {tag}
+          </span>
+                    ))}
+                </div>
                 <span className="ml-auto px-2 py-1 bg-blue-100 text-blue-800 rounded">
         Escrow protected
       </span>
@@ -70,7 +94,7 @@ const Card = ({job}) => {
 
             {/* 底部价格 & 创建时间 */}
             <div className="mt-6 flex items-center justify-between">
-                <span className="text-xl font-semibold text-gray-800">$50 - $200 USDT</span>
+                <span className="text-xl font-semibold text-gray-800">{`$${job.budget.min} - $${job.budget.max}`} USDT </span>
                 <span className="text-sm text-gray-500">Created Jun 27, 2025</span>
             </div>
         </div>
@@ -92,7 +116,7 @@ export default function Job() {
     }, []);
     return (
         <div className={"flex flex-col h-screen"}>
-            <Header router={'agent'}/>
+            <Header router={'job'}/>
             <div className={"h-20  m-auto w-full   bg-gray-50 flex items-center justify-between"}>
                 <div className={"w-2/3  m-auto"}>
                     <input className={"h-10 w-7/9 bg-white border-1 rounded-sm text-gray-500 border-gray-200 pl-10"}

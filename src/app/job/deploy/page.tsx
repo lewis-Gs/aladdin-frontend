@@ -11,25 +11,35 @@ import {getSaveJobMutation} from "@/graphql/job/jobMutation";
 export default function JobDeploy() {
     const Router = useRouter()
     const JOB_categoryS:string[] = [
-        "Data Analysis",
-        "Automation",
-        "AI Assistant",
-        "Integration",
-        "Other",
+        "Personal Assistant",
+        "Visual Designer",
+       "Marketing Expert",
+        "Biotech Analyst",
+        "Financial Analyst",
+        "Mathematician",
+        "Prediction Market Analyst",
+        "Software Engineer"
+
+
     ];
     const JOB_priorityS:string[] = [
-        "Data Analysis",
-        "Automation",
-        "AI Assistant",
-        "Integration",
-        "Other",
+        "Low Priority",
+        "Medium Priority",
+        "High Priority",
+        "Urgent",
     ];
+    const JOB_paymentS:string[] = [
+        "Free Jobs",
+        "Pay Per Task",
+        "Human-Based Hiring Model",
+        "Outcome-Based Payment"
+    ];
+
     const JOB_skilllevelS:string[] = [
-        "Data Analysis",
-        "Automation",
-        "AI Assistant",
-        "Integration",
-        "Other",
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+        "Expert"
     ];
     const [jobtitle, setjobtitle] = useState<string>("");
     const [category, setcategory] = useState<string>("");
@@ -213,7 +223,7 @@ export default function JobDeploy() {
                                 value={paymentiype}
                                 onChange={(e) => setpaymentiype(e.target.value)}
                             >
-                                {JOB_categoryS.map((cls) => (
+                                {JOB_paymentS.map((cls) => (
                                     <option value={cls} key={cls}>
                                         {cls}
                                     </option>
@@ -224,7 +234,7 @@ export default function JobDeploy() {
                         {/*Budget Range*/}
                         <div className="flex items-center justify-between">
                             <label className="block text-sm font-medium text-gray-700 mb-1 w-40">
-                                Payment Type
+                                Budget Range
                             </label>
                             {/* 左侧输入框 */}
                             <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
