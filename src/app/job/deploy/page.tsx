@@ -5,30 +5,51 @@ import {service} from "@/graphql/API";
 import {getSaveAgentsMutation} from "@/graphql/agents/agentsMutation";
 import { useRouter } from 'next/navigation';
 import { CalendarIcon } from '@heroicons/react/24/outline';
+import {getSaveJobMutation} from "@/graphql/job/jobMutation";
 
 
 export default function JobDeploy() {
     const Router = useRouter()
-    const AGENT_categoryS:string[] = [
+    const JOB_categoryS:string[] = [
         "Data Analysis",
         "Automation",
         "AI Assistant",
         "Integration",
         "Other",
     ];
-
+    const JOB_priorityS:string[] = [
+        "Data Analysis",
+        "Automation",
+        "AI Assistant",
+        "Integration",
+        "Other",
+    ];
+    const JOB_skilllevelS:string[] = [
+        "Data Analysis",
+        "Automation",
+        "AI Assistant",
+        "Integration",
+        "Other",
+    ];
     const [jobtitle, setjobtitle] = useState<string>("");
-    const [tags, setTags] = useState<string[]>([]);
-    const [tagInput, setTagInput] = useState<string>("");
-    const [autoAccept, setAutoAccept] = useState<boolean>(true);
     const [category, setcategory] = useState<string>("");
-    const [agentAddress, setAgentAddress] = useState<string>("");
+    const [tags, setTags] = useState<string[]>([]);
     const [description, setdescription] = useState<string>("");
     const [paymentiype, setpaymentiype] = useState<string>("");
-    const [minAmount, setMinAmount] = useState('');
-    const [maxAmount, setMaxAmount] = useState('');
-    const [date, setDate] = useState('');
-    const [authorBio, setAuthorBio] = useState<string>("");
+    const [budget, setbudget] = useState('');
+    const [maxbudget, setmaxbudget] = useState('');
+    const [deadline, setdeadline] = useState('');
+    const [priority, setpriority] = useState('');
+    const [skilllevel, setskilllevel] = useState('');
+    const [deliverables, setdeliverables] = useState<string>("");
+
+    const [tagInput, setTagInput] = useState<string>("");
+    const [autoassign, setautoassign] = useState<boolean>(true);
+    const [allowbidding, setallowbidding] = useState<boolean>(true);
+    const [escrowenabled, setescrowenabled] = useState<boolean>(true);
+
+
+
     // const [isFree, setIsFree] = useState<boolean>(true);
 
     const handleAddTag = () => {
@@ -56,31 +77,35 @@ export default function JobDeploy() {
         setjobtitle("");
         setTags([]);
         setTagInput("");
-        setAutoAccept(true);
         setcategory("");
-        setAgentAddress("");
         setdescription("");
-        setAuthorBio("");
+        setdeliverables("");
         // setIsFree(true);
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const obj = {
-            id:`agent${Math.random()}`,
-            jobtitle:jobtitle,
+            id:`job-${Math.random()}`,
+            jobtitle,
+            category,
             tags:tags.toString(),
-            autoacceptjobs:autoAccept,
-            agentcategory:category,
-            agentaddress:agentAddress,
-            description:description,
-            authorbio:authorBio,
-            // isFree,
+            description,
+            paymentiype,
+            budget:{min:budget,max:maxbudget},
+            maxbudget:parseFloat(maxbudget),
+            deadline:new Date(deadline).toISOString(),
+            priority,
+            skilllevel,
+            deliverables,
+            autoassign,
+            allowbidding,
+            escrowenabled
         }
-        service(getSaveAgentsMutation(obj)).then(res=>{
+        service(getSaveJobMutation(obj)).then(res=>{
             console.log(res);
             alert('保存成功')
-            Router.push('/agent')
+            Router.push('/job')
             // if()
 
         })
@@ -115,7 +140,7 @@ export default function JobDeploy() {
                                 value={category}
                                 onChange={(e) => setcategory(e.target.value)}
                             >
-                                {AGENT_categoryS.map((cls) => (
+                                {JOB_categoryS.map((cls) => (
                                     <option value={cls} key={cls}>
                                         {cls}
                                     </option>
@@ -188,7 +213,7 @@ export default function JobDeploy() {
                                 value={paymentiype}
                                 onChange={(e) => setpaymentiype(e.target.value)}
                             >
-                                {AGENT_categoryS.map((cls) => (
+                                {JOB_categoryS.map((cls) => (
                                     <option value={cls} key={cls}>
                                         {cls}
                                     </option>
@@ -205,8 +230,8 @@ export default function JobDeploy() {
                             <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                                 <input
                                     type="number"
-                                    value={minAmount}
-                                    onChange={e => setMinAmount(e.target.value)}
+                                    value={budget}
+                                    onChange={e => setbudget(e.target.value)}
                                     placeholder="0"
                                     className="w-30 p-2 outline-none"
                                 />
@@ -220,8 +245,8 @@ export default function JobDeploy() {
                             <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                                 <input
                                     type="number"
-                                    value={maxAmount}
-                                    onChange={e => setMaxAmount(e.target.value)}
+                                    value={maxbudget}
+                                    onChange={e => setmaxbudget(e.target.value)}
                                     placeholder="0"
                                     className="w-24 p-2 outline-none"
                                 />
@@ -236,8 +261,8 @@ export default function JobDeploy() {
                         <div className="relative inline-block flex-1">
                             <input
                                 type="date"
-                                value={date}
-                                onChange={e => setDate(e.target.value)}
+                                value={deadline}
+                                onChange={e => setdeadline(e.target.value)}
                                 placeholder="年/月/日"
                                 className="
                                   w-full
@@ -264,10 +289,10 @@ export default function JobDeploy() {
                             </label>
                             <select
                                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-                                value={paymentiype}
-                                onChange={(e) => setpaymentiype(e.target.value)}
+                                value={priority}
+                                onChange={(e) => setpriority(e.target.value)}
                             >
-                                {AGENT_categoryS.map((cls) => (
+                                {JOB_priorityS.map((cls) => (
                                     <option value={cls} key={cls}>
                                         {cls}
                                     </option>
@@ -282,10 +307,10 @@ export default function JobDeploy() {
                             </label>
                             <select
                                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-                                value={paymentiype}
-                                onChange={(e) => setpaymentiype(e.target.value)}
+                                value={skilllevel}
+                                onChange={(e) => setskilllevel(e.target.value)}
                             >
-                                {AGENT_categoryS.map((cls) => (
+                                {JOB_skilllevelS.map((cls) => (
                                     <option value={cls} key={cls}>
                                         {cls}
                                     </option>
@@ -303,8 +328,8 @@ export default function JobDeploy() {
                             <textarea
                                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-400 outline-none"
                                 rows={3}
-                                value={authorBio}
-                                onChange={(e) => setAuthorBio(e.target.value)}
+                                value={deliverables}
+                                onChange={(e) => setdeliverables(e.target.value)}
                                 placeholder="Introduce your professional background, skills, or team experience, e.g.: 3 years of AI development experience, specializing in natural language processing..."
                             />
                         </div>
@@ -317,26 +342,26 @@ export default function JobDeploy() {
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={autoAccept}
-                                    onChange={() => setAutoAccept((v) => !v)}
+                                    checked={autoassign}
+                                    onChange={() => setautoassign((v) => !v)}
                                     className="sr-only peer"
                                 />
-                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${autoAccept ? '!bg-blue-500' : ''}`}></div>
-                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${autoAccept ? 'translate-x-5' : ''}`}></div>
+                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${autoassign ? '!bg-blue-500' : ''}`}></div>
+                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${autoassign ? 'translate-x-5' : ''}`}></div>
                             </label>
                         </div>
                         {/* Allow Bidding */}
                         <div className="flex items-center gap-11">
-                            <span className="text-sm font-medium text-gray-700">Auto Accept Jobs</span>
+                            <span className="text-sm font-medium text-gray-700">Allow Bidding</span>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={autoAccept}
-                                    onChange={() => setAutoAccept((v) => !v)}
+                                    checked={allowbidding}
+                                    onChange={() => setallowbidding((v) => !v)}
                                     className="sr-only peer"
                                 />
-                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${autoAccept ? '!bg-blue-500' : ''}`}></div>
-                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${autoAccept ? 'translate-x-5' : ''}`}></div>
+                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${allowbidding ? '!bg-blue-500' : ''}`}></div>
+                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${allowbidding ? 'translate-x-5' : ''}`}></div>
                             </label>
                         </div>
                         {/* Enable Fund Escrow */}
@@ -345,12 +370,12 @@ export default function JobDeploy() {
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={autoAccept}
-                                    onChange={() => setAutoAccept((v) => !v)}
+                                    checked={escrowenabled}
+                                    onChange={() => setescrowenabled((v) => !v)}
                                     className="sr-only peer"
                                 />
-                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${autoAccept ? '!bg-blue-500' : ''}`}></div>
-                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${autoAccept ? 'translate-x-5' : ''}`}></div>
+                                <div className={`w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors duration-300 ${escrowenabled ? '!bg-blue-500' : ''}`}></div>
+                                <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${escrowenabled ? 'translate-x-5' : ''}`}></div>
                             </label>
                         </div>
 
