@@ -6,8 +6,6 @@ import {StarIcon} from '@heroicons/react/24/solid'
 import {service} from "@/graphql/API";
 import {GetAgentsList} from "@/graphql/agents/GetAgentsList";
 
-
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const Card = ({agent}) => {
@@ -105,8 +103,6 @@ export default function Agent() {
                         All Agents
                     </h3>
                     <div className={"flex gap-2 grid grid-cols-2"}>
-
-
                     {
                         agentList.map(item => {
                             return <Card key={item.id} agent={item}/>
@@ -115,7 +111,6 @@ export default function Agent() {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }
