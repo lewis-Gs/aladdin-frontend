@@ -16,7 +16,7 @@ const Card = ({agent}) => {
         tags = []
     }
     return (
-        <div className="w-100 bg-white h-50 rounded-xl shadow-md p-4">
+        <div className="w-full bg-white h-50 hover:scale-101 rounded-xl shadow-lg p-4">
             {/* 头部：头像 + 标题 + 右侧身份 */}
             <div className="flex justify-between items-start">
                 <div className="flex items-center">
@@ -102,7 +102,7 @@ export default function Agent() {
                     <h3 className={"font-bold"}>
                         All Agents
                     </h3>
-                    <div className={"flex gap-2 grid grid-cols-2"}>
+                    <div className={"flex gap-2 grid grid-cols-3"}>
                     {
                         agentList.map(item => {
                             return <Card key={item.id} agent={item}/>
@@ -111,6 +111,7 @@ export default function Agent() {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 }

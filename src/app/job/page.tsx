@@ -1,10 +1,12 @@
 "use client";
 import Header from "@/app/_components/Header";
 import {FormEvent, useEffect, useState} from "react";
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import {service} from "@/graphql/API";
 import { CalendarIcon } from '@heroicons/react/24/outline'
 import {GetJobsList} from "@/graphql/job/GetJobsList";
+
 function isExpired(isoDateStr: string | number | Date) {
     const targetTime = new Date(isoDateStr).getTime()
     if (isNaN(targetTime)) {
@@ -25,6 +27,7 @@ function formatToYYYYMMDD(isoDateStr: string | number | Date) {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const Card = ({job}) => {
+    const router = useRouter()
     let tags = job.tags
     if(job.tags){
         tags = tags.split(',')
@@ -32,7 +35,7 @@ const Card = ({job}) => {
         tags = []
     }
     return (
-        <div className="relative max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <div className="relative  w-full hover:scale-101   mx-auto bg-white shadow-lg rounded-lg p-6" onClick={()=>{router.push(`/job/jobResult?jobid=${job.id}`)}}>
             {/* 右上角状态 */}
             <div className="absolute top-4 right-4 flex space-x-2">
       <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
@@ -138,10 +141,10 @@ export default function Job() {
                     <h3 className={"font-bold"}>
                         All Jobs
                     </h3>
-                    <div className={"flex gap-2 grid grid-cols-2"}>
+                    <div className={"flex gap-4  grid grid-cols-2"}>
                         {
                             jobList.map(item => {
-                                return <Card key={item.id} job={item}/>
+                                return <Card  key={item.id} job={item}/>
                             })
                         }
                     </div>

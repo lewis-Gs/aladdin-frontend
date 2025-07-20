@@ -2,7 +2,6 @@
 import Header from "@/app/_components/Header";
 import {useState} from "react";
 import {service} from "@/graphql/API";
-import {getSaveAgentsMutation} from "@/graphql/agents/agentsMutation";
 import { useRouter } from 'next/navigation';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import {getSaveJobMutation} from "@/graphql/job/jobMutation";
@@ -13,7 +12,7 @@ export default function JobDeploy() {
     const JOB_categoryS:string[] = [
         "Personal Assistant",
         "Visual Designer",
-       "Marketing Expert",
+        "Marketing Expert",
         "Biotech Analyst",
         "Financial Analyst",
         "Mathematician",
